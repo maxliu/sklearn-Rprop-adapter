@@ -3,6 +3,6 @@
 ##Motivation
 
 ##basic idea
-'''
+```
 class RPClassifier(BaseEstimator, ClassifierMixin):
-'''
+```
