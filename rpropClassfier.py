@@ -1,22 +1,21 @@
 
 """
 
-author:
+authors:
     xinyulrsm@gmail.com
     alisonbwen@gmail.com
 """
 
-
+from __future__ import division
 import numpy as np
 import pandas as pd
+from scipy.stats import randint as sp_randint
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import precision_score, accuracy_score
-
-from scipy.stats import randint as sp_randint
 
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.supervised.trainers import BackpropTrainer as BP
@@ -35,6 +34,14 @@ class RPClassifier(BaseEstimator, ClassifierMixin):
         pass
 
     def fit(self, X, y):
+        """ build a network from training set (X, y).
+
+        parameters
+        ----------
+
+
+
+        """
 
         y_train = np.array([[yn] for yn in y])
         _, self.in_size = X.shape
