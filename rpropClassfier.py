@@ -8,26 +8,19 @@ authors:
 
 from __future__ import division
 import numpy as np
-import pandas as pd
-from scipy.stats import randint as sp_randint
 
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.pipeline import Pipeline
-from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
-from sklearn.metrics import precision_score, accuracy_score
 
 from pybrain.tools.shortcuts import buildNetwork
-from pybrain.supervised.trainers import BackpropTrainer as BP
 from pybrain.supervised.trainers import RPropMinusTrainer as RP
-from pybrain.datasets.supervised import SupervisedDataSet as SDS
+from pybrain.datasets.supervised import SupervisedDataSet
 
 from math import sqrt
 
 
 class RPClassifier(BaseEstimator, ClassifierMixin):
 
-    def __init__(self, h_size=2, epo=2, verbose=False):
+    def __init__(self, h_size=2, epo=2, verbose=0):
         self.h_size = h_size
         self.epo = epo
         self.verbose = verbose
@@ -38,8 +31,13 @@ class RPClassifier(BaseEstimator, ClassifierMixin):
 
         parameters
         ----------
+        X : array-like or sparse matrix of shape = [n_samples, n_features]
 
+        y : array-like, shape = [n_samples] or [n_samples, n_output]
 
+        return
+        ------
+        self : object
 
         """
 
@@ -47,111 +45,68 @@ class RPClassifier(BaseEstimator, ClassifierMixin):
         _, self.in_size = X.shape
         _, self.out_size = y_train.shape
 
-        ds = SDS(self.in_size, self.out_size)
+        ds = SupervisedDataSet(self.in_size, self.out_size)
 
         ds.setField('input', X)
         ds.setField('target', y_train)
 
         self.net = buildNetwork(self.in_size,
                                 self.h_size, self.out_size, bias=True)
-        trainer = RP(self.net, dataset = ds)
+        trainer = RP(self.net, dataset=ds)
 
-        print ("start training ...")
+        if self.verbose > 0:
+            print ("start training ...")
 
         for n in xrange(self.epo):
             mse = trainer.train()
             rmse = sqrt(mse)
-            if self.verbose:
+            if self.verbose > 0:
                 print ("RMSE = %8.3f epoch = %d" % (rmse, n))
         return self
 
     def predict(self, X):
+        """Predict class for X.
 
+        Parameters
+        ----------
+        X : array-like or sparse matrix of shape = [n_samples, n_features]
+
+        Returns
+        -------
+
+        y : array-like, shape = [n_samples] or [n_samples, n_output]
+
+        """
+        # TODO for multi output features
         p = self.predict_proba(X)
         p_class = np.array([1 if pn > 0.5 else 0 for pn in p])
         return p_class
 
     def predict_proba(self, X):
+        """Predict class probabilities for X.
+
+        Parameters
+        ----------
+        X : array-like or sparse matrix of shape = [n_samples, n_features]
+
+        Returns
+        -------
+
+        p : array-like, shape = [n_samples] or [n_samples, n_output]
+
+        """
 
         row_size, in_size = X.shape
 
         y_test_dumy = np.zeros([row_size, self.out_size])
 
+        # check size
         assert(self.net.indim == in_size)
 
-        ds = SDS(in_size, self.out_size)
+        ds = SupervisedDataSet(in_size, self.out_size)
 
         ds.setField('input', X)
         ds.setField('target', y_test_dumy)
 
         p = self.net.activateOnDataset(ds)
         return np.array([pn[0] for pn in p])
-
-
-if __name__ == '__main__':
-
-    h_size = 8
-    epo = 3
-
-    print "reading data"
-    train = pd.read_csv('./data/train.csv')
-
-    x_train = train.values[:, 0:-1]
-    y_train = train.values[:, -1]
-
-    y_train_01 = np.array([1 if yn > 0.5 else 0 for yn in y_train])
-
-    bpc = RPClassifier(h_size=h_size, epo=epo)
-
-    bpc.fit(x_train, y_train_01)
-
-    p = bpc.predict(x_train)
-
-    score = bpc.score(x_train, y_train_01)
-    print "score = ", score
-    #test pipeline
-
-    #anova_filter = SelectKBest(f_regression, k=2)
-    #anova_bp = Pipeline([
-        #('anava', anova_filter),
-        #('bpc', bpc)
-    #])
-
-    #anova_bp.fit(x_train, y_train)
-
-    #p = anova_bp.predict_proba(x_train)
-
-    #p_c = anova_bp.predict(x_train)
-
-    #y_c = np.array([1 if yn > 0.5 else 0 for yn in y_train])
-
-    #accuracy = float(sum([1 for tf in p_c == y_c if tf]))/float(len(p_c))
-
-    #print "accuracy is %8.4f" % accuracy
-
-    # test gridsearch
-    print "starting grid search ... "
-    param_dist = {"h_size": sp_randint(2, 10)}
-    clf = bpc
-    n_iter_search = 2
-    random_search = RandomizedSearchCV(clf,
-                                       param_distributions=param_dist,
-                                       n_iter=n_iter_search,
-                                       verbose=1
-                                       )
-                                       #,
-                                       #scoring=accuracy_score
-                                       #)
-
-    print("start fitting ....")
-    random_search.fit(x_train, y_train_01)
-    print("Best parameters set found on development set:")
-    print()
-    print(random_search.best_estimator_)
-    print()
-    print("scores on development set:")
-    print()
-    for params, mean_score, scores in random_search.grid_scores_:
-        print("%0.3f (+/-%0.03f) for %r"
-              % (mean_score, scores.std() / 2, params))
-
