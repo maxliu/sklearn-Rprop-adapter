@@ -31,7 +31,7 @@ Add those three steps into "fit" method will do the job.
                                 self.h_size, self.out_size, bias=True)
         trainer = RPropMinusTrainer(self.net, dataset=ds)
 ```
-##Example
+##Examples
 ###With Pipeline (see ./examples/rprop_pipeline.py)
 ```
     bpc = RPClassifier(h_size=h_size, epo=epo)
