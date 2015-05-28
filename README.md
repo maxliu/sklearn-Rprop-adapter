@@ -1,7 +1,7 @@
 # sklearn-Rprop-adpter
 
 ##Motivation
-I like to use sklearn for my data mining works especially the functins of Pipeline and parameter searchj. However, to date, I could not find the neuron network I needed such as BP. pybrain is a excelent library for neuron network algorithms, there is no need to invent the wheels again. 
+I like to use sklearn for my data mining works especially the functins of Pipeline and parameter search. However, to date, I could not find the neuron network I needed such as BP. pybrain is a excelent library for neuron network algorithms, there is no need to invent the wheels again. 
 
 ##Basic idea
 It is easy to make a customerized clssifier fit into sklearn. 
@@ -34,7 +34,7 @@ Add those three steps into "fit" method will do the job.
 ##Example
 ###With Pipeline (see ./examples/rprop_pipeline.py)
 ```
- bpc = RPClassifier(h_size=h_size, epo=epo)
+    bpc = RPClassifier(h_size=h_size, epo=epo)
 
     anova_filter = SelectKBest(f_regression, k=4)
 
