@@ -3,7 +3,7 @@
 ##Motivation
 I like to use sklearn for my data mining works especially the functins of Pipeline and parameter searchj. However, to date, I could not find the neuron network I needed such as BP. pybrain is a excelent library for neuron network algorithms, there is no need to invent the wheels again. 
 
-##basic idea
+##Basic idea
 It is easy to make a customerized clssifier fit into sklearn. 
 ```
 class RPClassifier(BaseEstimator, ClassifierMixin):
@@ -29,7 +29,38 @@ Add those three steps into "fit" method will do the job.
                                 self.h_size, self.out_size, bias=True)
         trainer = RPropMinusTrainer(self.net, dataset=ds)
 ```
+##Example
+###With Pipeline (see ./examples/rprop_pipeline.py)
+```
+ bpc = RPClassifier(h_size=h_size, epo=epo)
 
+    anova_filter = SelectKBest(f_regression, k=4)
+
+    anova_bp = Pipeline([
+        ('anava', anova_filter),
+        ('bpc', bpc)
+    ])
+
+    anova_bp.fit(x_train, y_train)
+
+    p = anova_bp.predict_proba(x_train)
+
+    p_c = anova_bp.predict(x_train)
+```
+###With parameter search (see ./examples/rprop_search.py)
+```
+    bpc = RPClassifier(h_size=h_size, epo=epo)
+
+    print "starting grid search ... "
+    param_dist = {"h_size": sp_randint(2, 10)}
+    clf = bpc
+    n_iter_search = 2
+    random_search = RandomizedSearchCV(clf,
+                                       param_distributions=param_dist,
+                                       n_iter=n_iter_search,
+                                       verbose=1
+                                       )
+```
 ##References
 http://pybrain.org/docs/index.html
 
