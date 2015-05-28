@@ -9,6 +9,8 @@ It is easy to make a customerized clssifier fit into sklearn.
 class RPClassifier(BaseEstimator, ClassifierMixin):
 ```
 There are three stes for pybrain to build and train a network.
+
+
 1. create dataset.
 2. define topology of network.
 3. create trainer.
