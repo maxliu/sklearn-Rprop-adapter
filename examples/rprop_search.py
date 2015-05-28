@@ -1,5 +1,6 @@
 """
 
+search for parameters for rpropClassfier
 
 """
 
@@ -8,8 +9,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
 from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.metrics import precision_score, accuracy_score
+import numpy as np
 import pandas as pd
 from scipy.stats import randint as sp_randint
+from rpropClassfier import RPClassifier
 
 if __name__ == '__main__':
 
@@ -17,7 +20,7 @@ if __name__ == '__main__':
     epo = 3
 
     print "reading data"
-    train = pd.read_csv('./data/train.csv')
+    train = pd.read_csv('../data/train.csv')
 
     x_train = train.values[:, 0:-1]
     y_train = train.values[:, -1]

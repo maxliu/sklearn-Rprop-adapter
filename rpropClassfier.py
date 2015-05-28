@@ -77,7 +77,7 @@ class RPClassifier(BaseEstimator, ClassifierMixin):
         y : array-like, shape = [n_samples] or [n_samples, n_output]
 
         """
-        # TODO for multi output features
+        # TODO for multi output classes
         p = self.predict_proba(X)
         p_class = np.array([1 if pn > 0.5 else 0 for pn in p])
         return p_class
