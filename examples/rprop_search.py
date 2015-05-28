@@ -5,10 +5,7 @@ search for parameters for rpropClassfier
 """
 
 
-from sklearn.pipeline import Pipeline
-from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
-from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.metrics import precision_score, accuracy_score
+from sklearn.grid_search import RandomizedSearchCV
 import numpy as np
 import pandas as pd
 from scipy.stats import randint as sp_randint
@@ -35,25 +32,6 @@ if __name__ == '__main__':
 
     score = bpc.score(x_train, y_train_01)
     print "score = ", score
-    #test pipeline
-
-    #anova_filter = SelectKBest(f_regression, k=2)
-    #anova_bp = Pipeline([
-        #('anava', anova_filter),
-        #('bpc', bpc)
-    #])
-
-    #anova_bp.fit(x_train, y_train)
-
-    #p = anova_bp.predict_proba(x_train)
-
-    #p_c = anova_bp.predict(x_train)
-
-    #y_c = np.array([1 if yn > 0.5 else 0 for yn in y_train])
-
-    #accuracy = float(sum([1 for tf in p_c == y_c if tf]))/float(len(p_c))
-
-    #print "accuracy is %8.4f" % accuracy
 
     # test gridsearch
     print "starting grid search ... "
@@ -65,9 +43,6 @@ if __name__ == '__main__':
                                        n_iter=n_iter_search,
                                        verbose=1
                                        )
-                                       #,
-                                       #scoring=accuracy_score
-                                       #)
 
     print("start fitting ....")
     random_search.fit(x_train, y_train_01)
@@ -80,4 +55,3 @@ if __name__ == '__main__':
     for params, mean_score, scores in random_search.grid_scores_:
         print("%0.3f (+/-%0.03f) for %r"
               % (mean_score, scores.std() / 2, params))
-
