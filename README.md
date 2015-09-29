@@ -1,4 +1,4 @@
-# sklearn-Rprop-adpter
+# sklearn-Rprop-adapter
 
 ##Motivation
 I like to use sklearn for my data mining works especially the functions of Pipeline and parameter search. However, to date, I could not find the neuron network I needed such as BP. pybrain is an excellent library for neuron network algorithms, there is no need to invent the wheels again. 
